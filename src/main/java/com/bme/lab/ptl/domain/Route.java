@@ -16,6 +16,10 @@ public class Route {
     }
 
     public String getOrigin() {
-        return null;
+        return this.origin;
+    }
+
+    public String getDestination() {
+        return this.destination;
     }
 }

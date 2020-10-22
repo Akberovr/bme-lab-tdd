@@ -37,11 +37,11 @@ public class RouteControllerTest {
     @Test
     public void getRoute_ShouldReturnRoute() throws Exception {
 
-        given(routeService.getRoutes()).willReturn(new Route("",""));
+        given(routeService.getRoutes()).willReturn(new Route("Baku","Budapest"));
 
         mockMvc.perform(MockMvcRequestBuilders.get("/routes"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("origin").value(""))
-                .andExpect(jsonPath("desttination").value(""));
+                .andExpect(jsonPath("origin").value("Baku"))
+                .andExpect(jsonPath("destination").value("Budapest"));
     }
 }
