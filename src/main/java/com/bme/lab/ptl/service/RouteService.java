@@ -12,6 +12,6 @@ import org.springframework.stereotype.Service;
 public class RouteService {
 
     public Route getRoutes() {
-        return new Route("","");
+        return new Route("Baku","Budapest");
     }
 }

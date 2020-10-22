@@ -4,11 +4,16 @@ import com.bme.lab.ptl.domain.Route;
 import com.bme.lab.ptl.service.RouteService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.skyscreamer.jsonassert.JSONAssert;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.test.web.servlet.RequestBuilder;
+import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import java.util.ArrayList;
@@ -39,9 +44,13 @@ public class RouteControllerTest {
 
         given(routeService.getRoutes()).willReturn(new Route("Baku","Budapest"));
 
-        mockMvc.perform(MockMvcRequestBuilders.get("/routes"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("origin").value("Baku"))
-                .andExpect(jsonPath("destination").value("Budapest"));
+        RequestBuilder requestBuilder = MockMvcRequestBuilders.get("/routes")
+                .accept(MediaType.APPLICATION_JSON);
+
+        MvcResult result = mockMvc.perform(requestBuilder).andReturn();
+        String expected = "{origin:Baku,destination:Budapest}";
+        JSONAssert.assertEquals(expected, result.getResponse()
+                .getContentAsString(), false);
+
     }
 }
