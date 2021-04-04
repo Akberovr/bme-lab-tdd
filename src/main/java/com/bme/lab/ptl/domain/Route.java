@@ -1,25 +1,47 @@
 package com.bme.lab.ptl.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
+
+import javax.persistence.*;
+import java.io.Serializable;
+import javax.validation.constraints.NotBlank;
 /**
  * @author akberovr (Rovshan Akbarov)
  * created on 2020-10-20
  */
-public class Route {
+@NoArgsConstructor
+@AllArgsConstructor
+@Getter
+@Setter
+@Entity
+@Table(name = "route")
+public class Route implements Serializable {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-    private String origin;
-    private String destination;
+    private @NotBlank(message = "Field can not be blank") String origin;
 
-    public Route(String origin, String destination) {
-        this.origin = origin;
-        this.destination = destination;
-    }
+    private @NotBlank(message = "Field can not be blank") String destination;
 
-    public String getOrigin() {
-        return this.origin;
-    }
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "company_id", nullable = false)
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    @JsonIgnore
+    private Company company;
 
-    public String getDestination() {
-        return this.destination;
+    @Override
+    public String toString() {
+        return "Route{" +
+                "origin='" + origin + '\'' +
+                ", destination='" + destination + '\'' +
+                '}';
     }
 }
