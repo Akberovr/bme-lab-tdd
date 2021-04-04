@@ -1,9 +1,13 @@
 package com.bme.lab.ptl.rest;
 
 import com.bme.lab.ptl.domain.Route;
-import com.bme.lab.ptl.service.RouteService;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RestController;
+import com.bme.lab.ptl.service.route.RouteService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
 
 /**
  * @author akberovr (Rovshan Akbarov)
@@ -11,17 +15,36 @@ import org.springframework.web.bind.annotation.RestController;
  */
 
 @RestController
-class RouteController {
+@RequiredArgsConstructor
+public class RouteController {
 
-    private RouteService routeService;
+    private final RouteService routeService;
 
-    RouteController(RouteService routeService) {
-        this.routeService = routeService;
+    @GetMapping("company/routes")
+    public Iterable<Route> getRoute() {
+        return routeService.findAll();
     }
 
-    @GetMapping("/routes")
-    private Route getRoute(){
-        return routeService.getRoutes();
+    @GetMapping("company/{companyId}/routes/{id}")
+    public ResponseEntity<Route> getRouteByIdAndCompanyId(@PathVariable(value = "companyId") Long companyId,
+                                              @PathVariable(value = "id") Long id) {
+        return routeService.findByIdAndCompanyId(id, companyId)
+                .map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    @PostMapping("/company/{companyId}/routes")
+    @ResponseStatus(HttpStatus.CREATED)
+    public Route create(@PathVariable(value = "companyId") Long companyId,
+                        @RequestBody @Valid Route route) {
+        return routeService.createRoute(companyId, route);
+    }
+
+    @DeleteMapping("/company/{companyId}/routes/{routeId}")
+    public ResponseEntity<?> deleteRoute(@PathVariable(value = "companyId") Long companyId,
+                                           @PathVariable(value = "routeId") Long routeId) {
+        routeService.delete(companyId, routeId);
+        return ResponseEntity.ok().build();
     }
 
 }
