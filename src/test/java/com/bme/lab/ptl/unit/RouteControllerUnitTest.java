@@ -2,7 +2,7 @@ package com.bme.lab.ptl.unit;
 
 import com.bme.lab.ptl.domain.Company;
 import com.bme.lab.ptl.domain.Route;
-import com.bme.lab.ptl.rest.RouteController;
+import com.bme.lab.ptl.rest.management.RouteController;
 import com.bme.lab.ptl.service.route.RouteService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -10,6 +10,8 @@ import org.mockito.Mockito;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.Assert.assertEquals;
@@ -37,7 +39,7 @@ class RouteControllerUnitTest {
         routeService = Mockito.mock(RouteService.class);
         routeController = new RouteController(routeService);
         company = new Company(1L, "KLM", "klm@gmail.com");
-        route = new Route(1L, "Baku", "Budapest", company);
+        route = new Route(1L, "Baku", "Budapest", 10.0, company);
     }
 
     @Test
