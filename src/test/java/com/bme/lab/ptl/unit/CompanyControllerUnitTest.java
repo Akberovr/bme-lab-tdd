@@ -1,7 +1,7 @@
 package com.bme.lab.ptl.unit;
 
 import com.bme.lab.ptl.domain.Company;
-import com.bme.lab.ptl.rest.CompanyController;
+import com.bme.lab.ptl.rest.management.CompanyController;
 import com.bme.lab.ptl.service.company.CompanyService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

@@ -1,20 +1,21 @@
 package com.bme.lab.ptl.domain;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.*;
+import org.hibernate.annotations.NaturalId;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author akberovr (Rovshan Akbarov)
- * created on 3/19/21
+ * created on 5/3/21
  */
 @NoArgsConstructor
-@AllArgsConstructor
+@RequiredArgsConstructor
 @Getter
 @Setter
 @Entity
@@ -23,12 +24,27 @@ public class Company {
 
     private @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    Long id;
+    @NonNull Long id;
 
-    private @NotBlank(message = "Field can not be blank") String name;
+    private @NonNull @NotBlank(message = "Field can not be blank") String name;
 
-    private @NotBlank(message = "Field can not be blank") String email;
+    private @NonNull @NotBlank(message = "Field can not be blank") String email;
 
+    @OneToMany(
+            mappedBy = "company",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
+    )
+    @JsonIgnore
+    private List<Route> routes = new ArrayList<>();
+
+
+    @OneToMany(
+            mappedBy = "company",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
+    )
+    private List<Rating> ratings = new ArrayList<>();
 
     @Override
     public String toString() {

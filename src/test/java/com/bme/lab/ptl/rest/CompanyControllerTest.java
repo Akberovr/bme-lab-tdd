@@ -7,12 +7,14 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
-
+import static com.bme.lab.ptl.auth.config.ApplicationUserRoles.ADMIN;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -30,8 +32,9 @@ import static org.hamcrest.CoreMatchers.is;
  * created on 3/20/21
  */
 
+@SpringBootTest
+@AutoConfigureMockMvc
 @ExtendWith(SpringExtension.class)
-@WebMvcTest(CompanyController.class)
 class CompanyControllerTest {
 
     @Autowired
@@ -55,44 +58,48 @@ class CompanyControllerTest {
         objectMapper = new ObjectMapper();
         company = new Company(1L, "KLM", "klm@gmail.com");
     }
-
+    @WithMockUser(username = "admin", authorities = {"company:read"})
     @Test
     void findAll_ShouldReturnAll() throws Exception {
 
         given(companyService.findAll())
                 .willReturn(companyList);
-        mockMvc.perform(get("/companies")
+        mockMvc.perform(get("/management/companies")
                 .contentType("application/json"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.size()", is(companyList.size())));
+                .andExpect(jsonPath("$.size()"
+                        , is(companyList.size())));
     }
 
+    @WithMockUser(username = "admin", authorities = {"company:read"})
     @Test
     void findById_ShouldFetchCompanyById() throws Exception {
         Long companyId = company.getId();
         given(companyService.findById(companyId))
                 .willReturn(Optional.of(company));
-        mockMvc.perform(get("/companies/{id}", companyId))
+        mockMvc.perform(get("/management/companies/{id}", companyId))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.name", is(company.getName())))
                 .andExpect(jsonPath("$.email", is(company.getEmail())));
     }
 
+    @WithMockUser(username = "admin", authorities = {"company:read"})
     @Test
     void shouldReturn404WhenCompanyById() throws Exception {
         final Long companyId = company.getId();
         given(companyService.findById(companyId))
                 .willReturn(Optional.empty());
-        mockMvc.perform(get("/companies/{id}", companyId))
+        mockMvc.perform(get("/management/companies/{id}", companyId))
                 .andExpect(status().isNotFound());
     }
 
+    @WithMockUser(username = "admin", authorities = {"company:write"})
     @Test
     void create_ShouldCreateNewCompany() throws Exception {
         given(companyService.createCompany(any(Company.class)))
                 .willAnswer((invocation -> invocation.getArgument(0)));
 
-        mockMvc.perform(post("/companies")
+        mockMvc.perform(post("/management/companies")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(company)))
                 .andExpect(status().isCreated())
@@ -100,6 +107,7 @@ class CompanyControllerTest {
                 .andExpect(jsonPath("$.name", is(company.getName())));
     }
 
+    @WithMockUser(username = "admin", authorities = {"company:delete"})
     @Test
     void deleteCompany_shouldDeleteCompany() throws Exception {
         Long companyId = company.getId();
@@ -107,7 +115,7 @@ class CompanyControllerTest {
         given(companyService.findById(companyId)).willReturn(Optional.of(company));
         doNothing().when(companyService).delete(companyId);
 
-        mockMvc.perform(delete("/companies/{companyId}", companyId))
+        mockMvc.perform(delete("/management/companies/{companyId}", companyId))
                 .andExpect(status().isOk());
     }
 

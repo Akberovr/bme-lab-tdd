@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ptl-project-lab
+  labels:
+    app: ptl-project-lab
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: ptl-project-lab
+  template:
+    metadata:
+      labels:
+        app: ptl-project-lab
+    spec:
+      containers:
+        - name: ptl-project-lab
+          image: dockerovshan/ptl:v0.0.3
+          ports:
+            - containerPort: 8080
+          command: [ "/bin/bash", "-c", "--" ]
+          args: [ "while true; do sleep 30; done;" ]

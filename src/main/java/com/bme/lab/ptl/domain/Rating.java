@@ -6,41 +6,39 @@ import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
-import java.io.Serializable;
 import javax.validation.constraints.NotBlank;
+
 /**
  * @author akberovr (Rovshan Akbarov)
- * created on 2020-10-20
+ * created on 5/3/21
  */
+
 @NoArgsConstructor
 @RequiredArgsConstructor
 @Getter
 @Setter
 @Entity
-@Table(name = "route")
-public class Route implements Serializable {
+public class Rating {
 
-    @Id
+    private @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @NonNull private Long id;
+    @NonNull Long id;
 
-    private @NonNull @NotBlank(message = "Field can not be blank") String origin;
+    private @NonNull @NotBlank(message = "Field can not be blank") Integer value;
 
-    private @NonNull @NotBlank(message = "Field can not be blank") String destination;
-
-    private @NonNull @NotBlank(message = "Field can not be blank")  Double loadCapacity;
+    private @NonNull @NotBlank(message = "Field can not be blank") String feedback;
 
     @ManyToOne(fetch = FetchType.EAGER, optional = false)
     @JoinColumn(name = "company_id", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
-    @NonNull
+    @JsonIgnore
     private Company company;
+
 
     @Override
     public String toString() {
-        return "Route{" +
-                "origin='" + origin + '\'' +
-                ", destination='" + destination + '\'' +
+        return "Rating{" +
+                ", value=" + value +
                 '}';
     }
 }

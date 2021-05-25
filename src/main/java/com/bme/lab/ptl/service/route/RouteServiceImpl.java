@@ -5,6 +5,8 @@ import com.bme.lab.ptl.domain.Route;
 import com.bme.lab.ptl.repository.CompanyRepository;
 import com.bme.lab.ptl.repository.RouteRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -33,6 +35,16 @@ public class RouteServiceImpl implements RouteService {
             throw new ResourceNotFoundException("CompanyId " + companyId + " not found");
         }
         return routeRepository.findByIdAndCompanyId(routeId, companyId);
+    }
+
+    @Override
+    public Page<Route> findByOriginAndDestination(String origin, String destination, Pageable pageable) {
+        return routeRepository.findByOriginAndDestination(origin,destination,pageable);
+    }
+
+    @Override
+    public Page<Route> findRouteByLoadCapacityLessThanEqual(Double capacity, Pageable pageable) {
+        return routeRepository.findRouteByLoadCapacityLessThanEqual(capacity, pageable);
     }
 
     @Override
